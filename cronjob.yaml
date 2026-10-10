@@ -1,0 +1,27 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: k8s-inspector
+  namespace: inspector
+spec:
+  schedule: "0 2 * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          serviceAccountName: k8s-inspector
+          restartPolicy: OnFailure
+          containers:
+            - name: inspector
+              image: myharbor:30159/library/k8s-inspector:v6
+              imagePullPolicy: Always
+              envFrom:
+                - configMapRef:
+                    name: inspector-secret
+              volumeMounts:
+                - name: config
+                  mountPath: /etc/inspector
+          volumes:
+            - name: config
+              configMap:
+                name: inspector-config

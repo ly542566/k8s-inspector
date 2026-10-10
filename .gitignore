@@ -1,0 +1,18 @@
+# 敏感信息
+inspector-secret*.yaml
+run_local.sh
+*.secret
+*.key
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+
+# 编辑器
+.vscode/
+.idea/
+*.swp
+.DS_Store

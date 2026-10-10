@@ -1,0 +1,36 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: inspector-config
+  namespace: inspector
+data:
+  config.yaml: |
+    checks:
+      node:
+        enabled: true
+        check_ready: true
+        check_taints: true
+      pod:
+        enabled: true
+        restart_threshold: 5
+        ignore_namespaces:
+          - kube-system
+      pvc:
+        enabled: true
+        ignore_namespaces:
+          - kube-system
+      component:
+        enabled: true
+        required_pods:
+          kube-system:
+            - calico-node
+            - coredns
+            - kube-proxy
+          ingress-nginx:
+            - ingress-nginx-controller
+      deployment:
+        enabled: true
+        ignore_namespaces:
+          - kube-system
+      image:
+        enabled: true
