@@ -1,0 +1,16 @@
+name: Hello World
+
+on: push
+
+jobs:
+  hello:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 打印一句话
+        run: echo "Hello, GitHub Actions!"
+
+      - name: 打印当前时间
+        run: date
+
+      - name: 打印当前分支
+        run: echo "当前分支：${{ github.ref }}"
