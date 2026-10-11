@@ -1,0 +1,64 @@
+# ============================================================
+# 命名空间
+# ============================================================
+namespace: inspector
+
+# ============================================================
+# 镜像配置
+# ============================================================
+image:
+  repository: myharbor:30159/library/k8s-inspector
+  tag: v7
+  pullPolicy: Always
+
+# ============================================================
+# 定时调度（每天凌晨 2 点）
+# ============================================================
+schedule: "0 2 * * *"
+
+# ============================================================
+# 巡检规则
+# ============================================================
+checks:
+  node:
+    enabled: true
+    check_ready: true
+    check_taints: true
+  pod:
+    enabled: true
+    restart_threshold: 5
+    ignore_namespaces:
+      - kube-system
+  pvc:
+    enabled: true
+    ignore_namespaces:
+      - kube-system
+  component:
+    enabled: true
+  deployment:
+    enabled: true
+    ignore_namespaces:
+      - kube-system
+  image:
+    enabled: true
+
+# ============================================================
+# SMTP 邮件配置
+# ============================================================
+smtp:
+  host: "smtp.qq.com"
+  port: "465"
+  user: "youremil@qq.com"
+  password: "your-auth-code"
+  mailTo: "your@qq.com"
+
+# ============================================================
+# 资源限制
+# ============================================================
+resources:
+  requests:
+    cpu: 100m
+    memory: 128Mi
+  limits:
+    cpu: 500m
+    memory: 512Mi

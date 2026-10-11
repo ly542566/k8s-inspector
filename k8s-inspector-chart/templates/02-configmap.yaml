@@ -1,0 +1,35 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: inspector-config
+  namespace: {{ .Values.namespace }}
+data:
+  config.yaml: |
+    checks:
+      node:
+        enabled: {{ .Values.checks.node.enabled }}
+        check_ready: {{ .Values.checks.node.check_ready }}
+        check_taints: {{ .Values.checks.node.check_taints }}
+      pod:
+        enabled: {{ .Values.checks.pod.enabled }}
+        restart_threshold: {{ .Values.checks.pod.restart_threshold }}
+        ignore_namespaces:
+        {{- range .Values.checks.pod.ignore_namespaces }}
+          - {{ . }}
+        {{- end }}
+      pvc:
+        enabled: {{ .Values.checks.pvc.enabled }}
+        ignore_namespaces:
+        {{- range .Values.checks.pvc.ignore_namespaces }}
+          - {{ . }}
+        {{- end }}
+      component:
+        enabled: {{ .Values.checks.component.enabled }}
+      deployment:
+        enabled: {{ .Values.checks.deployment.enabled }}
+        ignore_namespaces:
+        {{- range .Values.checks.deployment.ignore_namespaces }}
+          - {{ . }}
+        {{- end }}
+      image:
+        enabled: {{ .Values.checks.image.enabled }}

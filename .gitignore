@@ -16,3 +16,5 @@ venv/
 .idea/
 *.swp
 .DS_Store
+values-local.yaml
+backup-yaml/

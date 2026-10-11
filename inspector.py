@@ -209,8 +209,8 @@ def send_email(smtp_host, smtp_port, user, password, to_addr, subject, content):
         msg = MIMEText(content, "plain", "utf-8")
         
         # 关键修正：直接使用字符串格式，不要用 Header 包装
-        msg["From"] = user
-        msg["To"] = to_addr
+        msg["From"] = f"K8s Inspector <{user}>"
+        msg["To"] = f"K8s Inspector <{user}>"
         msg["Subject"] = Header(subject, "utf-8") # Subject 用 Header 编码是安全的
 
         # 连接 SMTP 服务器（SSL 加密）

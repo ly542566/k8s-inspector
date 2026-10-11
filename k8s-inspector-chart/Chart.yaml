@@ -1,0 +1,6 @@
+apiVersion: v2
+name: k8s-inspector
+description: K8s 集群自动化巡检平台
+type: application
+version: 1.0.0
+appVersion: "1.0.0"
