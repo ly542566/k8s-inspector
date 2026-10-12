@@ -1,69 +1,49 @@
 # ============================================================
-# Workflow 名字（显示在 GitHub Actions 页面）
+# Workflow 名字
 # ============================================================
 name: Build and Push Docker Image
 
 # ============================================================
-# 触发器：什么时候跑这个 Workflow
+# 触发器
 # ============================================================
 on:
   push:
-    branches: [main]        # 只有 push 到 main 分支才触发
-  # 取消下面注释，可以支持手动点击触发（Actions 页面会有 "Run workflow" 按钮）
-  # workflow_dispatch:
+    branches: [main]
 
 # ============================================================
-# 全局环境变量（下面所有步骤都能用）
+# 全局环境变量
 # ============================================================
 env:
-  REGISTRY: ghcr.io                                 # GitHub 的镜像仓库地址
+  REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository_owner }}/k8s-inspector
-  # 上面这行会被替换成：ly542566/k8s-inspector
-  # ${{ github.repository_owner }} 是 GitHub 内置变量，值是仓库拥有者的用户名
 
 # ============================================================
-# 任务列表（可以有多个 job，并行或串行）
+# 任务
 # ============================================================
 jobs:
-  # ---------- Job 名字：build ----------
   build:
-    # 在什么机器上跑（GitHub 免费提供的 Ubuntu 虚拟机）
     runs-on: ubuntu-latest
-
-    # 权限设置（GitHub Actions 默认权限很严格，需要显式声明）
     permissions:
-      contents: read        # 允许读取仓库代码
-      packages: write       # 允许推送镜像到 GHCR
+      contents: read
+      packages: write
 
-    # ---------- 步骤列表（按顺序执行） ----------
     steps:
-      # ----- 步骤 1：拉取代码 -----
       - name: Checkout code
         uses: actions/checkout@v4
-        # actions/checkout 是官方提供的 Action
-        # 作用：把仓库里的代码拉到 GitHub runner 的工作目录
 
-      # ----- 步骤 2：登录 GHCR -----
       - name: Log in to GitHub Container Registry
         uses: docker/login-action@v3
         with:
-          registry: ${{ env.REGISTRY }}        # 登录哪个仓库（ghcr.io）
-          username: ${{ github.actor }}        # 用户名（GitHub 内置变量，是你的用户名）
-          password: ${{ secrets.GITHUB_TOKEN }}  # 密码（GitHub 自动生成的临时 Token）
-          # secrets.GITHUB_TOKEN 不需要你手动配置
-          # GitHub 每次运行 workflow 时自动生成，用完就销毁
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
-      # ----- 步骤 3：构建并推送镜像 -----
+      # 注意：tags 多行字符串里不能有注释，否则会被当成 tag 值
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
-          context: .                            # 构建上下文：当前目录
-          push: true                            # 构建完是否推送（true = 推）
-          tags: |                               # 给镜像打标签（可以多个）
+          context: .
+          push: true
+          tags: |
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
-            # 第一个 tag：latest（永远指向最新）
-            # 第二个 tag：commit 哈希（唯一标识这次构建）
-            # 最终会生成两个镜像：
-            #   ghcr.io/ly542566/k8s-inspector:latest
-            #   ghcr.io/ly542566/k8s-inspector:dd17d3a...
